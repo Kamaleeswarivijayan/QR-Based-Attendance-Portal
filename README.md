@@ -1,13 +1,13 @@
-QR-Based Attendance Portal
+#QR-Based Attendance Portal
 
-📌 Project Overview
+##📌 Project Overview
 
 The Smart Secure QR-Based Attendance Management System (SSQAMS) is a web-based application developed using Django that simplifies and secures classroom attendance. Teachers generate a unique QR code for each class session, and students scan the QR code to mark their attendance. The system automatically records attendance while preventing duplicate entries and expired QR usage.
 
 
 ---
 
-🚀 Features
+##🚀 Features
 
 👨‍🏫 Teacher Module
 
@@ -71,7 +71,7 @@ User Management
 
 ---
 
-🔐 Security Features
+##🔐 Security Features
 
 Secure Authentication
 
@@ -93,7 +93,7 @@ Role-Based Access Control
 
 ---
 
-🛠️ Technology Stack
+##🛠️ Technology Stack
 
 Frontend
 
@@ -132,7 +132,7 @@ reportlab
 
 ---
 
-📂 Project Structure
+##📂 Project Structure
 
 SSQAMS/
 │
@@ -150,7 +150,7 @@ SSQAMS/
 
 ---
 
-⚙️ Installation
+##⚙️ Installation
 
 Clone the Repository
 
@@ -194,7 +194,7 @@ http://127.0.0.1:8000/
 
 ---
 
-📊 Workflow
+##📊 Workflow
 
 1. Teacher logs in.
 
@@ -231,7 +231,7 @@ Duplicate attendance
 
 ---
 
-📁 Modules
+##📁 Modules
 
 Authentication
 
@@ -255,7 +255,7 @@ Profile Management
 
 ---
 
-🎯 Future Enhancements
+##🎯 Future Enhancements
 
 Face Recognition Attendance
 
@@ -275,7 +275,7 @@ SMS Alerts
 
 
 
-👨‍💻 Developed By
+##👨‍💻 Developed By
 
 Kamaleeswari V
 
