@@ -1,0 +1,269 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 fade-in">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: var(--font-heading);">
+                Welcome back, <span class="text-primary">{{ student.user.first_name }}</span> 👋
+            </h2>
+            <p class="text-secondary mb-0">Here's your attendance overview and quick actions.</p>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill">
+                <i class="bi bi-person-badge me-1"></i> {{ student.register_number }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Student Info Card -->
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="card glass-card h-100 fade-in">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-semibold">
+                        <i class="bi bi-person-circle text-primary me-2"></i>My Profile
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-person"></i> Full Name</label>
+                                <p class="info-value">{{ student.user.get_full_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-person-vcard"></i> Register No</label>
+                                <p class="info-value">{{ student.register_number }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-building"></i> Department</label>
+                                <p class="info-value">{{ student.department }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-calendar"></i> Year</label>
+                                <p class="info-value">{{ student.year }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Card – Improved -->
+        <div class="col-lg-6">
+            <div class="card glass-card h-100 fade-in">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-semibold">
+                        <i class="bi bi-lightning-charge-fill text-warning me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body d-flex flex-column">
+
+                    <!-- ✅ Improved instruction card -->
+                    <div class="glass-alert mb-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-phone display-6 text-primary flex-shrink-0"></i>
+                            <div>
+                                <h6 class="mb-1 fw-bold">Scan Teacher QR Code</h6>
+                                <small class="text-muted d-block">
+                                    Use Google Lens or your phone's built‑in QR Scanner to scan the QR code
+                                    displayed by your teacher. Your attendance will be marked automatically.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <a href="{% url 'attendance_history' %}" class="btn btn-primary btn-ripple w-100">
+                            <i class="bi bi-clock-history me-1"></i> Attendance History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    /* ============================================
+       STUDENT DASHBOARD - NEON PURPLE GLASS THEME
+       ============================================ */
+
+    .glass-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+    .glass-card:hover {
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+    }
+
+    .card-header {
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Info Items */
+    .info-item {
+        padding: 0.4rem 0;
+        border-bottom: 1px solid var(--glass-border);
+    }
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    .info-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.1rem;
+    }
+    .info-label i {
+        margin-right: 0.3rem;
+        color: var(--primary-light);
+    }
+    .info-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Glass Alert – Improved */
+    .glass-alert {
+        background: rgba(112, 48, 239, 0.06);
+        border: 1px solid rgba(112, 48, 239, 0.12);
+        border-radius: var(--radius-sm);
+        padding: 1rem 1.25rem;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: var(--transition);
+    }
+    .glass-alert:hover {
+        background: rgba(112, 48, 239, 0.10);
+        border-color: rgba(112, 48, 239, 0.2);
+    }
+    .glass-alert i {
+        color: var(--primary-light);
+    }
+    .glass-alert h6 {
+        color: var(--text-primary);
+        font-family: var(--font-heading);
+    }
+    .glass-alert .text-muted {
+        color: var(--text-muted) !important;
+        line-height: 1.5;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        box-shadow: 0 4px 20px var(--primary-glow);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        padding: 0.6rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-primary:hover {
+        box-shadow: 0 8px 30px var(--primary-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    .btn-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+    .text-primary {
+        color: var(--primary-light) !important;
+    }
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .info-value {
+            font-size: 0.9rem;
+        }
+        .glass-alert {
+            font-size: 0.85rem;
+            padding: 0.75rem 1rem;
+        }
+        .glass-alert .display-6 {
+            font-size: 1.8rem !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 0.75rem;
+        }
+        .glass-alert .d-flex {
+            flex-direction: column;
+            align-items: center !important;
+            text-align: center;
+        }
+        .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+        .glass-alert .display-6 {
+            font-size: 2rem !important;
+        }
+    }
+</style>
+
+<script>
+    (function() {
+        'use strict';
+        // Any additional JS (if needed)
+    })();
+</script>
+
+{% endblock %}

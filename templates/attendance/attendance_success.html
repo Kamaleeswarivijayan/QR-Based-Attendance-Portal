@@ -1,0 +1,298 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Attendance Marked Successfully{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4 min-vh-100 d-flex align-items-center justify-content-center">
+
+    <!-- Success Card -->
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-6 col-md-8 col-12">
+            <div class="card glass-card success-card text-center fade-in">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Success Icon -->
+                    <div class="success-icon-wrapper mb-4">
+                        <div class="success-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+
+                    <h2 class="fw-bold text-success mb-2" style="font-family: var(--font-heading);">
+                        Attendance Marked!
+                    </h2>
+                    <p class="text-secondary mb-4">Your attendance has been recorded successfully.</p>
+
+                    <hr class="my-4" style="border-color: var(--glass-border);">
+
+                    <!-- Details -->
+                    <div class="row g-3 text-start">
+                        <div class="col-12">
+                            <div class="info-row d-flex align-items-center gap-3">
+                                <span class="info-icon"><i class="bi bi-person"></i></span>
+                                <div>
+                                    <span class="info-label">Student</span>
+                                    <p class="info-value">{{ student.user.get_full_name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-row d-flex align-items-center gap-3">
+                                <span class="info-icon"><i class="bi bi-book"></i></span>
+                                <div>
+                                    <span class="info-label">Subject</span>
+                                    <p class="info-value">{{ subject.subject_name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-row d-flex align-items-center gap-3">
+                                <span class="info-icon"><i class="bi bi-clock"></i></span>
+                                <div>
+                                    <span class="info-label">Marked At</span>
+                                    <p class="info-value">{% now "h:i A, F j, Y" %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" style="border-color: var(--glass-border);">
+
+                    <!-- Actions -->
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <a href="{% url 'student_dashboard' %}" class="btn btn-primary btn-ripple">
+                            <i class="bi bi-house me-1"></i> Dashboard
+                        </a>
+                        <a href="{% url 'scan_qr_page' %}" class="btn btn-outline-primary btn-ripple">
+                            <i class="bi bi-qr-code-scan me-1"></i> Scan Again
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    /* ============================================
+       SUCCESS PAGE - NEON PURPLE GLASS THEME
+       ============================================ */
+
+    .glass-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+    .glass-card:hover {
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+    }
+
+    .success-card {
+        position: relative;
+    }
+    .success-card::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(135deg, var(--success), var(--primary));
+        z-index: -1;
+        opacity: 0.08;
+        filter: blur(8px);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* Success Icon */
+    .success-icon-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(34, 197, 94, 0.15);
+        border: 2px solid rgba(34, 197, 94, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: var(--success);
+        box-shadow: 0 0 40px var(--success-glow);
+        animation: popIn 0.6s ease, pulseGlow 2s ease-in-out infinite 0.6s;
+    }
+    @keyframes popIn {
+        0% { transform: scale(0.5); opacity: 0; }
+        70% { transform: scale(1.15); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes pulseGlow {
+        0%, 100% { box-shadow: 0 0 40px var(--success-glow); }
+        50% { box-shadow: 0 0 70px var(--success-glow), 0 0 100px rgba(34, 197, 94, 0.15); }
+    }
+
+    /* Info Rows */
+    .info-row {
+        background: rgba(255,255,255,0.02);
+        border-radius: var(--radius-sm);
+        padding: 0.6rem 1rem;
+        border: 1px solid var(--glass-border);
+        transition: var(--transition);
+    }
+    .info-row:hover {
+        background: rgba(255,255,255,0.05);
+    }
+    .info-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(112, 48, 239, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-light);
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    .info-label {
+        display: block;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+    .info-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        box-shadow: 0 4px 20px var(--primary-glow);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-primary:hover {
+        box-shadow: 0 8px 30px var(--primary-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-outline-primary {
+        border: 1px solid var(--primary);
+        color: var(--primary-light);
+        background: transparent;
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-outline-primary:hover {
+        background: var(--primary);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px var(--primary-glow);
+    }
+    .btn-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+    .text-success {
+        color: var(--success) !important;
+    }
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 2.5rem;
+        }
+        .info-row {
+            padding: 0.4rem 0.8rem;
+        }
+        .info-value {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 1rem;
+        }
+        .success-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 2rem;
+        }
+        .btn-primary,
+        .btn-outline-primary {
+            width: 100%;
+            justify-content: center;
+        }
+        .d-flex.gap-3 {
+            flex-direction: column;
+            gap: 0.5rem !important;
+        }
+        .info-value {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* Fade-in animation (already defined in base, but ensure it's applied) */
+    .fade-in {
+        animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<!-- Additional script to handle success animation (optional) -->
+<script>
+    (function() {
+        'use strict';
+        // Any additional JS if needed (e.g., confetti? not required but could be added)
+        // For now, just ensure the icon animation plays.
+    })();
+</script>
+
+{% endblock %}

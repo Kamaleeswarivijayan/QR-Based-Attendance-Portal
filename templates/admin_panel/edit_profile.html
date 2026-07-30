@@ -1,0 +1,208 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'admin_profile' %}" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left"></i> Back to Profile
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-lg">
+
+                <!-- Header -->
+                <div class="card-header text-center py-5">
+
+                    <img src="https://ui-avatars.com/api/?name={{ request.user.get_full_name|default:request.user.username }}&background=7030EF&color=fff&size=140"
+                        class="rounded-circle shadow mb-3"
+                        width="140"
+                        height="140">
+
+                    <h2 class="fw-bold mb-1">
+                        Edit Administrator Profile
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        Update your account information
+                    </p>
+
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-5">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-semibold">
+                                    First Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="first_name"
+                                    class="form-control form-control-lg"
+                                    value="{{ request.user.first_name }}"
+                                    required>
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-semibold">
+                                    Last Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="last_name"
+                                    class="form-control form-control-lg"
+                                    value="{{ request.user.last_name }}"
+                                    required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Email Address
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control form-control-lg"
+                                value="{{ request.user.email }}"
+                                required>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-semibold">
+                                    Username
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    value="{{ request.user.username }}"
+                                    readonly>
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-semibold">
+                                    Role
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    value="Administrator"
+                                    readonly>
+
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-3">
+
+                            <a href="{% url 'admin_profile' %}"
+                                class="btn btn-secondary px-4">
+
+                                Cancel
+
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary px-5">
+
+                                <i class="bi bi-check-circle me-2"></i>
+
+                                Save Changes
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+.card{
+    border-radius:20px;
+}
+
+.card-header{
+    background:linear-gradient(135deg,#7030EF,#8B5CF6);
+    color:white;
+    border-radius:20px 20px 0 0;
+}
+
+.form-control{
+    border-radius:12px;
+    padding:12px;
+}
+
+.form-control:focus{
+    border-color:#7030EF;
+    box-shadow:0 0 0 .2rem rgba(112,48,239,.2);
+}
+
+.btn{
+    border-radius:12px;
+}
+
+.btn-primary{
+    background:#7030EF;
+    border:none;
+}
+
+.btn-primary:hover{
+    background:#5B21B6;
+}
+
+.btn-secondary{
+    border:none;
+}
+
+img{
+    border:5px solid rgba(255,255,255,.2);
+}
+
+</style>
+
+{% endblock %}

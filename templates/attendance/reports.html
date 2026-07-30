@@ -1,0 +1,624 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Attendance Reports{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 fade-in">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: var(--font-heading);">
+                Attendance Reports <span class="text-primary">📊</span>
+            </h2>
+            <p class="text-secondary mb-0">View and export detailed attendance records.</p>
+        </div>
+        <div class="mt-2 mt-sm-0 d-flex gap-2">
+            <a href="{% url 'export_excel' %}" class="btn btn-success btn-ripple">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+            </a>
+            <a href="{% url 'export_pdf' %}" class="btn btn-danger btn-ripple">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Card - Glass -->
+    <div class="card glass-card mb-4 fade-in">
+        <div class="card-header">
+            <h5 class="mb-0 fw-semibold">
+                <i class="bi bi-funnel-fill text-primary me-2"></i>Filter Records
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <div class="form-group floating-label">
+                        <input type="text"
+                               name="search"
+                               id="search"
+                               class="form-control glass-input"
+                               value="{{ request.GET.search }}"
+                               placeholder=" ">
+                        <label for="search">Search Student</label>
+                        <div class="input-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group floating-label">
+                        <select name="subject" id="subject" class="form-select glass-input">
+                            <option value="">All Subjects</option>
+                            {% for subject in subjects %}
+                                <option value="{{ subject.id }}" {% if request.GET.subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ subject.subject_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <label for="subject">Subject</label>
+                        <div class="input-icon">
+                            <i class="bi bi-book"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary btn-ripple w-100" type="submit">
+                        <i class="bi bi-search me-1"></i> Search
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'reports' %}" class="btn btn-secondary btn-ripple w-100">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Records Table Card - Glass -->
+    <div class="card glass-card fade-in">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-semibold">
+                <i class="bi bi-clock-history text-primary me-2"></i>Attendance Records
+            </h5>
+            <span class="badge bg-primary bg-opacity-20 text-primary rounded-pill px-3 py-1">
+                <i class="bi bi-database me-1"></i> {{ attendance_records|length }} records
+            </span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-person me-1"></i> Student</th>
+                            <th><i class="bi bi-person-vcard me-1"></i> Register No</th>
+                            <th><i class="bi bi-book me-1"></i> Subject</th>
+                            <th><i class="bi bi-clock me-1"></i> Time</th>
+                            <th><i class="bi bi-check-circle me-1"></i> Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in attendance_records %}
+                        <tr class="fade-in">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-2">
+                                        <span>{{ attendance.student.user.first_name|slice:":1" }}{{ attendance.student.user.last_name|slice:":1" }}</span>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium">{{ attendance.student.user.first_name }} {{ attendance.student.user.last_name }}</div>
+                                        <small class="text-muted">{{ attendance.student.user.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-primary fw-semibold">{{ attendance.student.register_number }}</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-outline-primary">{{ attendance.attendance_session.subject.subject_name }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted small">{{ attendance.scan_time }}</span>
+                            </td>
+                            <td>
+                                {% if attendance.status == "Present" %}
+                                    <span class="badge badge-success">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Present
+                                    </span>
+                                {% elif attendance.status == "Late" %}
+                                    <span class="badge badge-warning">
+                                        <i class="bi bi-clock-fill me-1"></i> Late
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-danger">
+                                        <i class="bi bi-x-circle-fill me-1"></i> Absent
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state py-5">
+                                    <i class="bi bi-inbox empty-icon"></i>
+                                    <h5 class="mt-3">No Attendance Records</h5>
+                                    <p class="text-secondary">Try adjusting your search filters or generate a QR code to start collecting attendance.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    /* ============================================
+       REPORTS PAGE - NEON PURPLE GLASS THEME
+       ============================================ */
+
+    .glass-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+    .glass-card:hover {
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+    }
+
+    .card-header {
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Floating Labels with Icons */
+    .form-group.floating-label {
+        position: relative;
+        margin-bottom: 0;
+    }
+
+    .form-group.floating-label .glass-input {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        padding: 1.5rem 1rem 0.5rem 2.8rem;
+        width: 100%;
+        transition: var(--transition);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        height: 56px;
+    }
+
+    .form-group.floating-label .glass-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-glow);
+        background: rgba(255,255,255,0.07);
+        outline: none;
+    }
+
+    .form-group.floating-label .glass-input::placeholder {
+        color: transparent;
+    }
+
+    .form-group.floating-label label {
+        position: absolute;
+        top: 0.9rem;
+        left: 2.8rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        transition: var(--transition);
+        pointer-events: none;
+        font-weight: 400;
+    }
+
+    .form-group.floating-label .glass-input:focus + label,
+    .form-group.floating-label .glass-input:not(:placeholder-shown) + label {
+        top: 0.3rem;
+        font-size: 0.65rem;
+        color: var(--primary-light);
+        font-weight: 500;
+        left: 2.8rem;
+    }
+
+    .form-group.floating-label .glass-input:focus + label {
+        color: var(--primary-light);
+    }
+
+    /* Input icon */
+    .form-group.floating-label .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        pointer-events: none;
+        transition: var(--transition);
+    }
+    .form-group.floating-label .glass-input:focus ~ .input-icon {
+        color: var(--primary-light);
+    }
+
+    /* Select dropdown */
+    .form-group.floating-label .form-select.glass-input {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        padding: 1.5rem 2rem 0.5rem 2.8rem;
+        width: 100%;
+        transition: var(--transition);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        height: 56px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23B9B7D4' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        cursor: pointer;
+    }
+    .form-group.floating-label .form-select.glass-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-glow);
+        background-color: rgba(255,255,255,0.07);
+        outline: none;
+    }
+    .form-group.floating-label .form-select.glass-input option {
+        background: var(--bg-surface);
+        color: var(--text-primary);
+    }
+    .form-group.floating-label .form-select.glass-input + label {
+        position: absolute;
+        top: 0.9rem;
+        left: 2.8rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        transition: var(--transition);
+        pointer-events: none;
+        font-weight: 400;
+    }
+    .form-group.floating-label .form-select.glass-input:focus + label,
+    .form-group.floating-label .form-select.glass-input:not([value=""]) + label {
+        top: 0.3rem;
+        font-size: 0.65rem;
+        color: var(--primary-light);
+        font-weight: 500;
+        left: 2.8rem;
+    }
+
+    /* Table */
+    .table {
+        color: var(--text-primary);
+        margin-bottom: 0;
+    }
+    .table thead th {
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid var(--glass-border);
+        padding: 0.9rem 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    .table thead th i {
+        color: var(--primary-light);
+        opacity: 0.7;
+    }
+    .table tbody td {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid var(--glass-border);
+        vertical-align: middle;
+        color: var(--text-secondary);
+    }
+    .table tbody tr {
+        transition: var(--transition);
+        background: transparent;
+    }
+    .table tbody tr:hover {
+        background: rgba(112, 48, 239, 0.04);
+        transform: scale(1.002);
+    }
+    .table tbody tr .fw-medium {
+        color: var(--text-primary);
+    }
+    .table tbody tr .text-primary {
+        color: var(--primary-light) !important;
+    }
+    .table tbody tr .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Avatar */
+    .avatar-sm {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.75rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.35rem 0.8rem;
+        font-weight: 600;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border: 1px solid transparent;
+    }
+    .badge-success {
+        background: rgba(34, 197, 94, 0.12);
+        color: var(--success);
+        border-color: rgba(34, 197, 94, 0.2);
+    }
+    .badge-danger {
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--danger);
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--warning);
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+    .badge-outline-primary {
+        background: rgba(112, 48, 239, 0.08);
+        color: var(--primary-light);
+        border-color: rgba(112, 48, 239, 0.15);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        box-shadow: 0 4px 20px var(--primary-glow);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-primary:hover {
+        box-shadow: 0 8px 30px var(--primary-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-success {
+        background: var(--success);
+        border: none;
+        box-shadow: 0 4px 20px var(--success-glow);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-success:hover {
+        box-shadow: 0 8px 30px var(--success-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-danger {
+        background: var(--danger);
+        border: none;
+        box-shadow: 0 4px 20px var(--danger-glow);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-danger:hover {
+        box-shadow: 0 8px 30px var(--danger-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-secondary {
+        background: var(--bg-surface);
+        border: 1px solid var(--glass-border);
+        color: var(--text-secondary);
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-secondary:hover {
+        background: var(--bg-card-hover);
+        color: var(--text-primary);
+        transform: translateY(-2px);
+        border-color: var(--glass-border);
+    }
+    .btn-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Empty State */
+    .empty-state .empty-icon {
+        font-size: 4rem;
+        color: var(--text-muted);
+        opacity: 0.3;
+    }
+    .empty-state h5 {
+        color: var(--text-primary);
+    }
+    .empty-state p {
+        color: var(--text-secondary);
+    }
+
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+    .text-primary {
+        color: var(--primary-light) !important;
+    }
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .form-group.floating-label .glass-input {
+            height: 50px;
+            font-size: 0.9rem;
+            padding: 1.3rem 0.8rem 0.4rem 2.5rem;
+        }
+        .form-group.floating-label .form-select.glass-input {
+            height: 50px;
+            font-size: 0.9rem;
+            padding: 1.3rem 2rem 0.4rem 2.5rem;
+        }
+        .form-group.floating-label label {
+            top: 0.8rem;
+            left: 2.5rem;
+            font-size: 0.8rem;
+        }
+        .form-group.floating-label .glass-input:focus + label,
+        .form-group.floating-label .glass-input:not(:placeholder-shown) + label {
+            top: 0.2rem;
+            font-size: 0.6rem;
+            left: 2.5rem;
+        }
+        .form-group.floating-label .input-icon {
+            left: 0.8rem;
+            font-size: 1rem;
+        }
+        .table thead th,
+        .table tbody td {
+            padding: 0.6rem 0.6rem;
+            font-size: 0.8rem;
+        }
+        .avatar-sm {
+            width: 28px;
+            height: 28px;
+            font-size: 0.6rem;
+        }
+        .badge {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 0.75rem;
+        }
+        .table-responsive {
+            border-radius: var(--radius);
+        }
+        .table thead th {
+            font-size: 0.6rem;
+            padding: 0.4rem 0.4rem;
+        }
+        .table tbody td {
+            padding: 0.4rem 0.4rem;
+            font-size: 0.7rem;
+        }
+        .avatar-sm {
+            width: 24px;
+            height: 24px;
+            font-size: 0.5rem;
+        }
+        .form-group.floating-label .glass-input {
+            height: 46px;
+            font-size: 0.85rem;
+            padding: 1.1rem 0.6rem 0.4rem 2.2rem;
+        }
+        .form-group.floating-label .form-select.glass-input {
+            height: 46px;
+            font-size: 0.85rem;
+            padding: 1.1rem 2rem 0.4rem 2.2rem;
+        }
+        .form-group.floating-label label {
+            top: 0.7rem;
+            left: 2.2rem;
+            font-size: 0.75rem;
+        }
+        .form-group.floating-label .glass-input:focus + label,
+        .form-group.floating-label .glass-input:not(:placeholder-shown) + label {
+            top: 0.2rem;
+            font-size: 0.55rem;
+            left: 2.2rem;
+        }
+        .form-group.floating-label .input-icon {
+            left: 0.6rem;
+            font-size: 0.9rem;
+        }
+        .btn-primary,
+        .btn-success,
+        .btn-danger,
+        .btn-secondary {
+            width: 100%;
+            justify-content: center;
+        }
+        .d-flex.gap-2 {
+            flex-wrap: wrap;
+            gap: 0.5rem !important;
+        }
+        .d-flex.gap-2 .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+    }
+</style>
+
+<script>
+    (function() {
+        'use strict';
+
+        // No additional JS needed for reports — filters are handled by GET
+
+        // Auto-focus search if query exists
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput && searchInput.value) {
+            searchInput.focus();
+            searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+        }
+
+    })();
+</script>
+
+{% endblock %}

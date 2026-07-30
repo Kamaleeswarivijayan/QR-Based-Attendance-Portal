@@ -1,0 +1,250 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 fade-in">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: var(--font-heading);">
+                Teacher Dashboard <span class="text-primary">🧑‍🏫</span>
+            </h2>
+            <p class="text-secondary mb-0">Welcome! Manage attendance, subjects, and QR sessions from here.</p>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill">
+                <i class="bi bi-calendar3 me-1"></i> {% now "l, F j, Y" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Action Cards -->
+    <div class="row g-4">
+
+        <!-- Generate QR -->
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'generate_qr' %}" class="action-card text-decoration-none d-block h-100">
+                <div class="card glass-card text-center h-100 p-4">
+                    <div class="action-icon mx-auto mb-3">
+                        <i class="bi bi-qr-code-scan"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-1 text-primary">Generate QR</h5>
+                    <p class="text-secondary small mb-0">Create a new attendance QR session</p>
+                    <span class="badge bg-primary bg-opacity-20 text-primary mt-3 rounded-pill px-3">New</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Attendance List -->
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'attendance_list' %}" class="action-card text-decoration-none d-block h-100">
+                <div class="card glass-card text-center h-100 p-4">
+                    <div class="action-icon mx-auto mb-3" style="background: rgba(34, 197, 94, 0.12); color: var(--success);">
+                        <i class="bi bi-list-ul"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-1" style="color: var(--success);">Attendance List</h5>
+                    <p class="text-secondary small mb-0">View all attendance records</p>
+                    <span class="badge bg-success bg-opacity-20 text-success mt-3 rounded-pill px-3">View</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Subjects -->
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'subject_list' %}" class="action-card text-decoration-none d-block h-100">
+                <div class="card glass-card text-center h-100 p-4">
+                    <div class="action-icon mx-auto mb-3" style="background: rgba(245, 158, 11, 0.12); color: var(--warning);">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-1" style="color: var(--warning);">Subjects</h5>
+                    <p class="text-secondary small mb-0">Manage your subjects</p>
+                    <span class="badge bg-warning bg-opacity-20 text-warning mt-3 rounded-pill px-3">Manage</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Teachers (maybe redirect to teacher list or profile?) -->
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'teacher_list' %}" class="action-card text-decoration-none d-block h-100">
+                <div class="card glass-card text-center h-100 p-4">
+                    <div class="action-icon mx-auto mb-3" style="background: rgba(59, 130, 246, 0.12); color: var(--info);">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-1" style="color: var(--info);">Teachers</h5>
+                    <p class="text-secondary small mb-0">View all teachers</p>
+                    <span class="badge bg-info bg-opacity-20 text-info mt-3 rounded-pill px-3">Directory</span>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Additional Stats or Recent Activity (optional) could go here -->
+    <!-- For future enhancement, keep the layout clean -->
+
+</div>
+
+<style>
+    /* ============================================
+       TEACHER DASHBOARD - NEON PURPLE GLASS THEME
+       ============================================ */
+
+    .glass-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .glass-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(112, 48, 239, 0.05), rgba(219, 31, 255, 0.02));
+        opacity: 0;
+        transition: var(--transition);
+        pointer-events: none;
+    }
+    .glass-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+        border-color: var(--primary);
+    }
+    .glass-card:hover::before {
+        opacity: 1;
+    }
+
+    .action-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        background: rgba(112, 48, 239, 0.12);
+        color: var(--primary-light);
+        transition: var(--transition);
+    }
+    .glass-card:hover .action-icon {
+        transform: scale(1.08);
+        box-shadow: 0 0 30px var(--primary-glow);
+    }
+
+    .action-card {
+        text-decoration: none;
+        display: block;
+        height: 100%;
+    }
+    .action-card .card {
+        height: 100%;
+        min-height: 200px;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 768px) {
+        .action-card .card {
+            min-height: 160px;
+        }
+        .action-icon {
+            width: 52px;
+            height: 52px;
+            font-size: 1.6rem;
+        }
+    }
+
+    /* Override button styling to match theme */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        box-shadow: 0 4px 20px var(--primary-glow);
+        color: #fff;
+    }
+    .btn-primary:hover {
+        box-shadow: 0 8px 30px var(--primary-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-success {
+        background: var(--success);
+        border: none;
+        box-shadow: 0 4px 20px var(--success-glow);
+        color: #fff;
+    }
+    .btn-success:hover {
+        box-shadow: 0 8px 30px var(--success-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-warning {
+        background: var(--warning);
+        border: none;
+        color: #0F172A;
+    }
+    .btn-warning:hover {
+        background: #D97706;
+        transform: translateY(-2px);
+        color: #0F172A;
+    }
+    .btn-info {
+        background: var(--info);
+        border: none;
+        color: #fff;
+    }
+    .btn-info:hover {
+        background: #2563EB;
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    .badge {
+        padding: 0.35rem 0.8rem;
+        font-weight: 600;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border: 1px solid transparent;
+    }
+    .badge-primary {
+        background: rgba(112, 48, 239, 0.12);
+        color: var(--primary-light);
+        border-color: rgba(112, 48, 239, 0.2);
+    }
+    .badge-success {
+        background: rgba(34, 197, 94, 0.12);
+        color: var(--success);
+        border-color: rgba(34, 197, 94, 0.2);
+    }
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--warning);
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+    .badge-info {
+        background: rgba(59, 130, 246, 0.12);
+        color: var(--info);
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+    .text-primary {
+        color: var(--primary-light) !important;
+    }
+</style>
+
+{% endblock %}

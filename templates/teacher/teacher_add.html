@@ -1,0 +1,559 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Add Teacher{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 fade-in">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: var(--font-heading);">
+                Add Teacher <span class="text-primary">🧑‍🏫</span>
+            </h2>
+            <p class="text-secondary mb-0">Register a new teacher into the system.</p>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <a href="{% url 'teacher_list' %}" class="btn btn-secondary btn-ripple">
+                <i class="bi bi-arrow-left me-1"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="toast-container">
+            {% for message in messages %}
+                <div class="toast toast-{{ message.tags|default:'info' }} show">
+                    <i class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% elif message.tags == 'error' %}x-circle-fill{% else %}info-circle-fill{% endif %} toast-icon"></i>
+                    <span class="toast-body">{{ message }}</span>
+                    <button type="button" class="toast-close" data-bs-dismiss="toast">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Add Form Card -->
+    <div class="card glass-card fade-in">
+        <div class="card-header">
+            <h5 class="mb-0 fw-semibold">
+                <i class="bi bi-person-plus text-primary me-2"></i>Teacher Registration Form
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="row g-4">
+
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+
+                        <div class="form-group floating-label">
+                            <input type="text"
+                                   name="username"
+                                   id="username"
+                                   class="form-control glass-input"
+                                   placeholder=" "
+                                   required>
+                            <label for="username">Username</label>
+                            <div class="invalid-feedback">Username is required.</div>
+                        </div>
+
+                        <div class="form-group floating-label">
+                            <input type="password"
+                                   name="password"
+                                   id="password"
+                                   class="form-control glass-input"
+                                   placeholder=" "
+                                   required>
+                            <label for="password">Password</label>
+                            <div class="invalid-feedback">Password is required.</div>
+                            <div class="password-toggle" onclick="togglePassword()">
+                                <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group floating-label">
+                            <input type="text"
+                                   name="first_name"
+                                   id="firstName"
+                                   class="form-control glass-input"
+                                   placeholder=" "
+                                   required>
+                            <label for="firstName">First Name</label>
+                            <div class="invalid-feedback">First name is required.</div>
+                        </div>
+
+                        <div class="form-group floating-label">
+                            <input type="text"
+                                   name="last_name"
+                                   id="lastName"
+                                   class="form-control glass-input"
+                                   placeholder=" ">
+                            <label for="lastName">Last Name</label>
+                        </div>
+
+                        <div class="form-group floating-label">
+                            <input type="email"
+                                   name="email"
+                                   id="email"
+                                   class="form-control glass-input"
+                                   placeholder=" ">
+                            <label for="email">Email</label>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+
+                        <div class="form-group floating-label">
+                            <input type="text"
+                                   name="employee_id"
+                                   id="employeeId"
+                                   class="form-control glass-input"
+                                   placeholder=" "
+                                   required>
+                            <label for="employeeId">Employee ID</label>
+                            <div class="invalid-feedback">Employee ID is required.</div>
+                        </div>
+
+                        <div class="form-group floating-label">
+                            <select name="department" id="department" class="form-select glass-input" required>
+                                <option value="" disabled selected>Select Department</option>
+                                {% for department in departments %}
+                                    <option value="{{ department.id }}">
+                                        {{ department.department_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <label for="department">Department</label>
+                            <div class="invalid-feedback">Please select a department.</div>
+                        </div>
+
+                        <div class="form-group floating-label">
+                            <input type="tel"
+                                   name="phone"
+                                   id="phone"
+                                   class="form-control glass-input"
+                                   placeholder=" ">
+                            <label for="phone">Phone Number</label>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" style="border-color: var(--glass-border);">
+
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                    <a href="{% url 'teacher_list' %}" class="btn btn-secondary btn-ripple">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-ripple">
+                        <i class="bi bi-person-plus-fill me-1"></i> Add Teacher
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    /* ============================================
+       ADD TEACHER - NEON PURPLE GLASS THEME
+       ============================================ */
+
+    .glass-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+    .glass-card:hover {
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+    }
+
+    .card-header {
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Floating Labels */
+    .form-group.floating-label {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group.floating-label .glass-input {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        padding: 1.5rem 1rem 0.5rem 1rem;
+        width: 100%;
+        transition: var(--transition);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        height: 56px;
+    }
+
+    .form-group.floating-label .glass-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-glow);
+        background: rgba(255,255,255,0.07);
+        outline: none;
+    }
+
+    .form-group.floating-label .glass-input::placeholder {
+        color: transparent;
+    }
+
+    .form-group.floating-label label {
+        position: absolute;
+        top: 0.9rem;
+        left: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        transition: var(--transition);
+        pointer-events: none;
+        font-weight: 400;
+    }
+
+    .form-group.floating-label .glass-input:focus + label,
+    .form-group.floating-label .glass-input:not(:placeholder-shown) + label {
+        top: 0.3rem;
+        font-size: 0.65rem;
+        color: var(--primary-light);
+        font-weight: 500;
+    }
+
+    .form-group.floating-label .glass-input:focus + label {
+        color: var(--primary-light);
+    }
+
+    /* Select dropdowns */
+    .form-group.floating-label .form-select.glass-input {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        padding: 1.5rem 2rem 0.5rem 1rem;
+        width: 100%;
+        transition: var(--transition);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        height: 56px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23B9B7D4' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        cursor: pointer;
+    }
+
+    .form-group.floating-label .form-select.glass-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-glow);
+        background-color: rgba(255,255,255,0.07);
+        outline: none;
+    }
+
+    .form-group.floating-label .form-select.glass-input option {
+        background: var(--bg-surface);
+        color: var(--text-primary);
+    }
+
+    .form-group.floating-label .form-select.glass-input + label {
+        position: absolute;
+        top: 0.9rem;
+        left: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        transition: var(--transition);
+        pointer-events: none;
+        font-weight: 400;
+    }
+
+    .form-group.floating-label .form-select.glass-input:focus + label,
+    .form-group.floating-label .form-select.glass-input:not([value=""]) + label,
+    .form-group.floating-label .form-select.glass-input:not(:placeholder-shown) + label {
+        top: 0.3rem;
+        font-size: 0.65rem;
+        color: var(--primary-light);
+        font-weight: 500;
+    }
+
+    /* Password toggle */
+    .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: var(--transition);
+        z-index: 5;
+    }
+    .password-toggle:hover {
+        color: var(--primary-light);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        box-shadow: 0 4px 20px var(--primary-glow);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-primary:hover {
+        box-shadow: 0 8px 30px var(--primary-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: var(--bg-surface);
+        border: 1px solid var(--glass-border);
+        color: var(--text-secondary);
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+    .btn-secondary:hover {
+        background: var(--bg-card-hover);
+        color: var(--text-primary);
+        transform: translateY(-2px);
+        border-color: var(--glass-border);
+    }
+
+    .btn-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 350px;
+    }
+    .toast {
+        background: var(--glass-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-lg);
+        padding: 0.8rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideInRight 0.4s ease;
+        color: var(--text-primary);
+    }
+    .toast .toast-icon {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+    .toast .toast-body {
+        flex: 1;
+        font-size: 0.9rem;
+    }
+    .toast .toast-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: var(--transition);
+        padding: 0 0.25rem;
+    }
+    .toast .toast-close:hover {
+        color: var(--text-primary);
+    }
+    .toast-success .toast-icon { color: var(--success); }
+    .toast-error .toast-icon { color: var(--danger); }
+    .toast-info .toast-icon { color: var(--info); }
+
+    @keyframes slideInRight {
+        from { transform: translateX(120%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Invalid feedback */
+    .invalid-feedback {
+        color: var(--danger);
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    .glass-input:invalid ~ .invalid-feedback,
+    .glass-input:invalid:not(:placeholder-shown) ~ .invalid-feedback,
+    .form-select.glass-input:invalid ~ .invalid-feedback {
+        display: block;
+    }
+    .glass-input:invalid:not(:placeholder-shown) {
+        border-color: var(--danger);
+    }
+
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+    .text-primary {
+        color: var(--primary-light) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .form-group.floating-label {
+            margin-bottom: 1.25rem;
+        }
+        .form-group.floating-label .glass-input {
+            height: 50px;
+            font-size: 0.9rem;
+            padding: 1.3rem 0.8rem 0.4rem 0.8rem;
+        }
+        .form-group.floating-label .form-select.glass-input {
+            height: 50px;
+            font-size: 0.9rem;
+            padding: 1.3rem 2rem 0.4rem 0.8rem;
+        }
+        .form-group.floating-label label {
+            top: 0.8rem;
+            left: 0.8rem;
+            font-size: 0.8rem;
+        }
+        .form-group.floating-label .glass-input:focus + label,
+        .form-group.floating-label .glass-input:not(:placeholder-shown) + label {
+            top: 0.2rem;
+            font-size: 0.6rem;
+        }
+        .toast-container {
+            max-width: 280px;
+            right: 10px;
+            bottom: 70px;
+        }
+        .password-toggle {
+            right: 0.8rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 0.75rem;
+        }
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            justify-content: center;
+        }
+        .d-flex.flex-wrap.justify-content-end {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .d-flex.flex-wrap.justify-content-end .btn {
+            width: 100%;
+        }
+        .form-group.floating-label .glass-input {
+            height: 46px;
+            font-size: 0.85rem;
+        }
+        .form-group.floating-label .form-select.glass-input {
+            height: 46px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+<script>
+    (function() {
+        'use strict';
+
+        // Toast auto-dismiss
+        document.querySelectorAll('.toast').forEach(function(toast) {
+            setTimeout(function() {
+                toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(30px)';
+                setTimeout(function() {
+                    toast.style.display = 'none';
+                }, 400);
+            }, 4000);
+        });
+
+        // Password toggle
+        window.togglePassword = function() {
+            const passwordInput = document.getElementById('password');
+            const icon = document.getElementById('togglePasswordIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        };
+
+        // Attach toggle to password field wrapper
+        const toggleBtn = document.querySelector('.password-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', togglePassword);
+        }
+
+        // Bootstrap validation
+        (function() {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+    })();
+</script>
+
+{% endblock %}

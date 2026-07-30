@@ -1,0 +1,286 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Attendance Calendar{% endblock %}
+
+{% block extra_head %}
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+    <!-- Custom Calendar Override (loaded after FullCalendar) -->
+    <style>
+        /* ============================================
+           CALENDAR PAGE - NEON PURPLE GLASS THEME
+           ============================================ */
+
+        /* Calendar container */
+        .calendar-wrapper {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+        .calendar-wrapper:hover {
+            box-shadow: var(--shadow-lg), var(--glow-purple);
+            background: var(--bg-card-hover);
+        }
+
+        /* FullCalendar overrides */
+        .fc {
+            color: var(--text-primary) !important;
+            font-family: var(--font-body) !important;
+        }
+        .fc .fc-toolbar-title {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .fc .fc-button {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-secondary) !important;
+            border-radius: var(--radius-sm) !important;
+            transition: var(--transition) !important;
+            font-family: var(--font-body) !important;
+            font-weight: 500 !important;
+            box-shadow: none !important;
+        }
+        .fc .fc-button:hover {
+            background: var(--bg-card-hover) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--primary) !important;
+            transform: translateY(-2px);
+        }
+        .fc .fc-button-primary:not(:disabled):focus {
+            box-shadow: 0 0 0 0.2rem var(--primary-glow) !important;
+        }
+        .fc .fc-button-primary:not(:disabled).fc-button-active,
+        .fc .fc-button-primary:not(:disabled):active {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: #fff !important;
+        }
+        .fc .fc-daygrid-day {
+            background: transparent !important;
+            border-color: var(--glass-border) !important;
+        }
+        .fc .fc-daygrid-day-number {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+        }
+        .fc .fc-daygrid-day.fc-day-today {
+            background: rgba(112, 48, 239, 0.08) !important;
+            border-color: var(--primary) !important;
+        }
+        .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+            color: var(--primary-light) !important;
+            font-weight: 700;
+        }
+        .fc .fc-col-header-cell {
+            background: rgba(255,255,255,0.03) !important;
+            border-color: var(--glass-border) !important;
+            padding: 0.5rem 0;
+        }
+        .fc .fc-col-header-cell-cushion {
+            color: var(--text-secondary) !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            padding: 0.5rem 0;
+        }
+        .fc .fc-daygrid-event {
+            border-radius: var(--radius-sm) !important;
+            border: none !important;
+            padding: 0.25rem 0.5rem !important;
+            font-weight: 500 !important;
+            font-size: 0.75rem !important;
+            cursor: pointer;
+            transition: var(--transition) !important;
+            margin-bottom: 2px !important;
+        }
+        .fc .fc-daygrid-event:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        /* Event colors based on status - we'll use inline styles from backend, but we override for consistency */
+        .fc-daygrid-event .fc-event-title {
+            font-weight: 500;
+        }
+        /* Present - green */
+        .fc-event[style*="background-color: green"] {
+            background: var(--success) !important;
+            color: #fff !important;
+        }
+        /* Absent - red */
+        .fc-event[style*="background-color: red"] {
+            background: var(--danger) !important;
+            color: #fff !important;
+        }
+        /* Late - orange */
+        .fc-event[style*="background-color: orange"] {
+            background: var(--warning) !important;
+            color: #0F172A !important;
+        }
+        /* Fallback for any other color */
+        .fc-event {
+            background: var(--primary) !important;
+            color: #fff !important;
+        }
+
+        /* More link */
+        .fc .fc-daygrid-more-link {
+            color: var(--primary-light) !important;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .fc .fc-daygrid-more-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Toolbar on mobile */
+        .fc .fc-toolbar {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .fc .fc-toolbar.fc-header-toolbar {
+            margin-bottom: 1.5rem;
+        }
+        .fc .fc-toolbar-title {
+            font-size: 1.25rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .calendar-wrapper {
+                padding: 0.75rem;
+            }
+            .fc .fc-toolbar-title {
+                font-size: 1rem;
+            }
+            .fc .fc-button {
+                padding: 0.25rem 0.5rem !important;
+                font-size: 0.75rem !important;
+            }
+            .fc .fc-daygrid-event {
+                font-size: 0.6rem !important;
+                padding: 0.15rem 0.3rem !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .fc .fc-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .fc .fc-toolbar .fc-left,
+            .fc .fc-toolbar .fc-right,
+            .fc .fc-toolbar .fc-center {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 fade-in">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: var(--font-heading);">
+                Attendance Calendar <span class="text-primary">📅</span>
+            </h2>
+            <p class="text-secondary mb-0">View your attendance records in a monthly calendar view.</p>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill">
+                <i class="bi bi-calendar3 me-1"></i> {% now "F Y" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Calendar Wrapper (Glass Card) -->
+    <div class="calendar-wrapper fade-in">
+        <div id="calendar"></div>
+    </div>
+
+    <!-- Legend / Info (optional) -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-3 justify-content-center text-secondary small">
+                <span><span class="badge badge-success me-1">●</span> Present</span>
+                <span><span class="badge badge-danger me-1">●</span> Absent</span>
+                <span><span class="badge badge-warning me-1">●</span> Late</span>
+                <span><i class="bi bi-info-circle me-1"></i> Click on an event for details</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl = document.getElementById('calendar');
+        if (calendarEl) {
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 700,
+                // Use the backend endpoint for events
+                events: '/attendance/calendar-events/',
+                // Event click handler
+                eventClick: function(info) {
+                    var status = info.event.title || 'Unknown';
+                    var date = info.event.start ? info.event.start.toLocaleDateString() : 'N/A';
+                    alert('Status: ' + status + '\nDate: ' + date);
+                },
+                // Customize event rendering (optional)
+                eventDidMount: function(info) {
+                    // Add a tooltip or extra styling if needed
+                    // The event title is already colored by the backend via the 'backgroundColor' property.
+                },
+                // Responsive header
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                },
+                // Button text
+                buttonText: {
+                    today: 'Today',
+                    month: 'Month',
+                    week: 'Week',
+                    day: 'Day'
+                },
+                // Allow event overlapping (optional)
+                eventOverlap: true,
+                // Week numbers
+                weekNumbers: true,
+                // Locale (if needed)
+                locale: 'en',
+                // Loading indicator
+                loading: function(isLoading) {
+                    if (isLoading) {
+                        // Show a spinner or overlay (optional)
+                    } else {
+                        // Hide spinner
+                    }
+                }
+            });
+
+            calendar.render();
+        }
+    });
+</script>
+
+{% endblock %}

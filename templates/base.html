@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Secure QR Attendance Management System">
+
+    <title>
+        {% block title %}Smart Secure QR Attendance{% endblock %}
+    </title>
+
+    <!-- Google Fonts: Inter & Sora -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Page CSS -->
+    {% block extra_css %}
+    {% endblock %}
+
+    <!-- Inline theme variables (ensure they match style.css) -->
+    <style>
+        /* Quick fallback for login pages - uses the same variables as dashboard */
+        :root {
+            --primary: #7030EF;
+            --primary-dark: #5B21B6;
+            --primary-light: #8B5CF6;
+            --primary-glow: rgba(112, 48, 239, 0.4);
+            --secondary: #8B5CF6;
+            --accent: #DB1FFF;
+            --accent-glow: rgba(219, 31, 255, 0.3);
+            --bg-dark: #090820;
+            --bg-surface: #16112F;
+            --bg-card: rgba(255, 255, 255, 0.06);
+            --bg-card-hover: rgba(255, 255, 255, 0.10);
+            --text-primary: #FFFFFF;
+            --text-secondary: #B9B7D4;
+            --text-muted: #8B89A8;
+            --glass-bg: rgba(22, 17, 47, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --success: #22C55E;
+            --success-glow: rgba(34, 197, 94, 0.3);
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --font-heading: 'Sora', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Light mode fallback (if user toggles) – will be overridden by dashboard but keep consistency */
+        .light-mode {
+            --bg-dark: #F8FAFC;
+            --bg-surface: #FFFFFF;
+            --bg-card: rgba(0, 0, 0, 0.02);
+            --bg-card-hover: rgba(0, 0, 0, 0.04);
+            --text-primary: #0F172A;
+            --text-secondary: #334155;
+            --text-muted: #64748B;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            transition: var(--transition);
+        }
+
+        /* Background glow orbs (same as dashboard) */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
+        }
+        .bg-glow-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            top: -10%;
+            left: -10%;
+            animation: floatGlow 20s ease-in-out infinite alternate;
+        }
+        .bg-glow-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            bottom: -10%;
+            right: -10%;
+            animation: floatGlow 25s ease-in-out infinite alternate-reverse;
+        }
+        .bg-glow-3 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.15;
+            animation: floatGlow 30s ease-in-out infinite alternate;
+        }
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 40px) scale(1.1); }
+        }
+
+        /* Ensure content appears above background */
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Background Glow Orbs (shared with dashboard for consistency) -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <div class="wrapper">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Global JavaScript -->
+    <script>
+        // Password Show / Hide (works with any password field id)
+        function togglePassword(id = "password") {
+            const input = document.getElementById(id);
+            if (!input) return;
+            const icon = document.getElementById(id + "Icon") || document.querySelector('[onclick*="togglePassword"] i');
+            if (input.type === "password") {
+                input.type = "text";
+                if (icon) {
+                    icon.classList.remove("bi-eye");
+                    icon.classList.add("bi-eye-slash");
+                }
+            } else {
+                input.type = "password";
+                if (icon) {
+                    icon.classList.remove("bi-eye-slash");
+                    icon.classList.add("bi-eye");
+                }
+            }
+        }
+
+        // Auto-dismiss alerts/messages after 5 seconds (for login page)
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateX(20px)';
+                    setTimeout(function() {
+                        if (alert.parentNode) alert.remove();
+                    }, 400);
+                }, 5000);
+            });
+        });
+    </script>
+
+    <!-- Page JS -->
+    {% block extra_js %}
+    {% endblock %}
+
+</body>
+
+</html>

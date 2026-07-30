@@ -1,0 +1,648 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login | Smart Secure QR Attendance{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       LOGIN PAGE - 60:40 SPLIT - NEON PURPLE GLASS
+       ============================================ */
+
+    /* Reset any inherited body styles for this page */
+    body {
+        background: var(--bg-dark);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-body);
+        color: var(--text-primary);
+        overflow-y: auto;
+    }
+
+    /* Wrapper already has z-index and flex from base, but we'll add our own container */
+    .login-wrapper {
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 1.5rem;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    .login-container {
+        display: flex;
+        width: 100%;
+        max-width: 1200px;
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-xl), var(--glow-purple);
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--glass-border);
+        transition: var(--transition);
+    }
+
+    /* ===== LEFT PANEL (60%) ===== */
+    .login-brand {
+        flex: 0 0 60%;
+        padding: 4rem 3rem;
+        background: linear-gradient(135deg, rgba(112, 48, 239, 0.15), rgba(219, 31, 255, 0.05));
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-right: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 500px;
+    }
+
+    .login-brand::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -20%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, var(--primary-glow), transparent 70%);
+        opacity: 0.3;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: floatGlow 8s ease-in-out infinite alternate;
+    }
+
+    .login-brand .brand-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #fff;
+        box-shadow: 0 20px 60px var(--primary-glow);
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .login-brand h1 {
+        font-family: var(--font-heading);
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+
+    .login-brand h1 span {
+        background: linear-gradient(to right, var(--primary-light), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .login-brand .tagline {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        margin-bottom: 2.5rem;
+        max-width: 80%;
+        position: relative;
+        z-index: 2;
+        line-height: 1.6;
+    }
+
+    .login-brand .feature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: var(--transition);
+    }
+
+    .feature-item:hover {
+        background: var(--bg-card-hover);
+        transform: translateY(-4px);
+        border-color: var(--primary);
+    }
+
+    .feature-item i {
+        font-size: 1.6rem;
+        color: var(--accent);
+        margin-top: 0.2rem;
+    }
+
+    .feature-item .feature-text h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.2rem;
+    }
+
+    .feature-item .feature-text p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* ===== RIGHT PANEL (40%) ===== */
+    .login-form {
+        flex: 1;
+        padding: 3rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 500px;
+    }
+
+    .login-form .form-header {
+        margin-bottom: 2rem;
+    }
+
+    .login-form .form-header h2 {
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.3rem;
+    }
+
+    .login-form .form-header p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .login-form .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .login-form .form-group label {
+        display: block;
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.3rem;
+    }
+
+    .input-box {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+
+    .input-box:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+
+    .input-box i {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        padding-left: 0.75rem;
+    }
+
+    .input-box input {
+        border: none;
+        background: transparent;
+        padding: 0.7rem 0.75rem 0.7rem 0.5rem;
+        width: 100%;
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        outline: none;
+    }
+
+    .input-box input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.5;
+    }
+
+    .input-box .toggle-password {
+        padding: 0 0.75rem;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: var(--transition);
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+    }
+
+    .input-box .toggle-password:hover {
+        color: var(--primary-light);
+    }
+
+    .role-selector {
+        margin: 1.5rem 0;
+    }
+
+    .role-selector label {
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .role-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .role-btn {
+        flex: 1;
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-secondary);
+        font-weight: 500;
+        transition: var(--transition);
+        cursor: pointer;
+        text-align: center;
+        font-family: var(--font-body);
+        min-width: 60px;
+    }
+
+    .role-btn:hover {
+        border-color: var(--primary);
+        background: rgba(112, 48, 239, 0.1);
+        color: var(--text-primary);
+    }
+
+    .role-btn.active {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: #fff;
+        border-color: var(--primary);
+        box-shadow: 0 4px 20px var(--primary-glow);
+    }
+
+    .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1.5rem 0;
+        font-size: 0.9rem;
+    }
+
+    .form-options label {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+    }
+
+    .form-options label input[type="checkbox"] {
+        accent-color: var(--primary);
+        width: 1rem;
+        height: 1rem;
+        cursor: pointer;
+    }
+
+    .form-options a {
+        color: var(--primary-light);
+        font-weight: 500;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .form-options a:hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 0.7rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border: none;
+        border-radius: var(--radius-sm);
+        color: #fff;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        cursor: pointer;
+        box-shadow: 0 8px 30px var(--primary-glow);
+        position: relative;
+        overflow: hidden;
+        font-family: var(--font-body);
+    }
+
+    .login-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .login-btn:active::after {
+        width: 300px;
+        height: 300px;
+    }
+
+    .login-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px var(--primary-glow);
+        color: #fff;
+    }
+
+    .login-btn:active {
+        transform: scale(0.97);
+    }
+
+    .login-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        letter-spacing: 0.02em;
+    }
+
+    /* Messages as glass toasts */
+    .alert {
+        border-radius: var(--radius-sm);
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border: none;
+        font-weight: 500;
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: slideInRight 0.4s ease;
+        box-shadow: var(--glass-shadow);
+    }
+
+    .alert-danger {
+        border-left: 4px solid var(--danger);
+        color: var(--danger);
+    }
+    .alert-success {
+        border-left: 4px solid var(--success);
+        color: var(--success);
+    }
+    .alert i {
+        font-size: 1.2rem;
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(30px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes floatGlow {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(20px, 20px) scale(1.1); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+        .login-container {
+            flex-direction: column;
+            max-width: 600px;
+        }
+        .login-brand {
+            flex: 0 0 auto;
+            border-right: none;
+            border-bottom: 1px solid var(--glass-border);
+            padding: 2.5rem 2rem;
+            min-height: auto;
+        }
+        .login-brand .feature-grid {
+            grid-template-columns: 1fr;
+        }
+        .login-brand .tagline {
+            max-width: 100%;
+        }
+        .login-form {
+            padding: 2rem 1.5rem;
+            min-height: auto;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .login-brand {
+            padding: 2rem 1.5rem;
+        }
+        .login-brand h1 {
+            font-size: 2rem;
+        }
+        .login-form {
+            padding: 1.5rem 1rem;
+        }
+        .role-buttons {
+            flex-direction: column;
+        }
+        .role-btn {
+            flex: none;
+            width: 100%;
+        }
+        .form-options {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-container">
+
+        <!-- Left Panel: Branding (60%) -->
+        <div class="login-brand">
+            <div class="brand-icon">
+                <i class="bi bi-qr-code-scan"></i>
+            </div>
+            <h1>Smart <span>Secure</span> QR Attendance</h1>
+            <p class="tagline">
+                Fast, secure, and intelligent attendance management powered by QR technology.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="bi bi-shield-check"></i>
+                    <div class="feature-text">
+                        <h5>Secure Login</h5>
+                        <p>Role‑based authentication</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-qr-code"></i>
+                    <div class="feature-text">
+                        <h5>QR Attendance</h5>
+                        <p>Instant scan &amp; mark</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-bar-chart-fill"></i>
+                    <div class="feature-text">
+                        <h5>Analytics</h5>
+                        <p>Visual reports &amp; insights</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-cloud-check"></i>
+                    <div class="feature-text">
+                        <h5>Real‑time Sync</h5>
+                        <p>Live attendance updates</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Login Form (40%) -->
+        <div class="login-form">
+            <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p>Login to continue your session</p>
+            </div>
+
+            <!-- Django messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'danger' }}">
+                        <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% else %}info-circle{% endif %}-fill"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-box">
+                        <i class="bi bi-person"></i>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-box">
+                        <i class="bi bi-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Toggle password visibility">
+                            <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="role-selector">
+                    <label>Login As</label>
+                    <div class="role-buttons">
+                        <button type="button" class="role-btn active" data-role="student">Student</button>
+                        <button type="button" class="role-btn" data-role="teacher">Teacher</button>
+                        <button type="button" class="role-btn" data-role="admin">Admin</button>
+                    </div>
+                    <input type="hidden" name="role" value="student" id="role">
+                </div>
+
+                <div class="form-options">
+                    <label>
+                        <input type="checkbox" name="remember"> Remember Me
+                    </label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </button>
+
+                <div class="login-footer">
+                    &copy; {% now "Y" %} Smart Secure QR Attendance
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // Role selection
+        const roleButtons = document.querySelectorAll('.role-btn');
+        const hiddenRole = document.getElementById('role');
+
+        roleButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                roleButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                hiddenRole.value = this.dataset.role;
+            });
+        });
+
+        // Password toggle
+        window.togglePassword = function() {
+            const passwordInput = document.getElementById('password');
+            const icon = document.getElementById('togglePasswordIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        };
+
+        // Auto-dismiss messages after 5 seconds
+        document.querySelectorAll('.alert').forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(20px)';
+                setTimeout(() => alert.remove(), 400);
+            }, 5000);
+        });
+    })();
+</script>
+{% endblock %}

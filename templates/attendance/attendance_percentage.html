@@ -1,0 +1,539 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Attendance Percentage{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 fade-in">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: var(--font-heading);">
+                Attendance Percentage <span class="text-primary">📊</span>
+            </h2>
+            <p class="text-secondary mb-0">View attendance percentage for all students across subjects.</p>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill">
+                <i class="bi bi-people-fill me-1"></i> {{ report|length }} Records
+            </span>
+        </div>
+    </div>
+
+    <!-- Summary Stats Cards -->
+    {% if report %}
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-card text-center">
+                <div class="stat-icon"><i class="bi bi-people"></i></div>
+                <div class="stat-label">Total Students</div>
+                <div class="stat-value">{{ total_students }}</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card stat-card-success text-center">
+                <div class="stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+                <div class="stat-label">Above 75%</div>
+                <div class="stat-value">{{ above_75 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card stat-card-warning text-center">
+                <div class="stat-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <div class="stat-label">50% – 74%</div>
+                <div class="stat-value">{{ between_50_75 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card stat-card-danger text-center">
+                <div class="stat-icon"><i class="bi bi-x-circle-fill"></i></div>
+                <div class="stat-label">Below 50%</div>
+                <div class="stat-value">{{ below_50 }}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Table Card - Glass -->
+    <div class="card glass-card fade-in">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-semibold">
+                <i class="bi bi-percent text-primary me-2"></i>Attendance Percentage Report
+            </h5>
+            {% if report %}
+            <span class="badge bg-primary bg-opacity-20 text-primary rounded-pill px-3 py-1">
+                <i class="bi bi-database me-1"></i> {{ report|length }} entries
+            </span>
+            {% endif %}
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-person me-1"></i> Student</th>
+                            <th><i class="bi bi-book me-1"></i> Subject</th>
+                            <th class="text-center"><i class="bi bi-check-circle me-1"></i> Present</th>
+                            <th class="text-center"><i class="bi bi-calendar me-1"></i> Total Classes</th>
+                            <th class="text-center"><i class="bi bi-percent me-1"></i> Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in report %}
+                        <tr class="fade-in">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-2">
+                                        <span>{{ item.student.user.first_name|slice:":1" }}{{ item.student.user.last_name|slice:":1" }}</span>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium">{{ item.student.user.first_name }} {{ item.student.user.last_name }}</div>
+                                        <small class="text-muted">{{ item.student.register_number }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge-outline-primary">{{ item.subject.subject_name }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="fw-semibold text-success">{{ item.present }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="fw-semibold">{{ item.total }}</span>
+                            </td>
+                            <td class="text-center">
+                                {% if item.percentage >= 75 %}
+                                    <span class="badge badge-success badge-lg">
+                                        <i class="bi bi-check-circle-fill me-1"></i> {{ item.percentage }}%
+                                    </span>
+                                    <div class="progress-bar-indicator mt-1"
+                                         data-width="{{ item.percentage }}"
+                                         style="background: var(--success);"></div>
+                                {% elif item.percentage >= 50 %}
+                                    <span class="badge badge-warning badge-lg">
+                                        <i class="bi bi-clock-fill me-1"></i> {{ item.percentage }}%
+                                    </span>
+                                    <div class="progress-bar-indicator mt-1"
+                                         data-width="{{ item.percentage }}"
+                                         style="background: var(--warning);"></div>
+                                {% else %}
+                                    <span class="badge badge-danger badge-lg">
+                                        <i class="bi bi-x-circle-fill me-1"></i> {{ item.percentage }}%
+                                    </span>
+                                    <div class="progress-bar-indicator mt-1"
+                                         data-width="{{ item.percentage }}"
+                                         style="background: var(--danger);"></div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state py-5">
+                                    <i class="bi bi-inbox empty-icon"></i>
+                                    <h5 class="mt-3">No Attendance Data</h5>
+                                    <p class="text-secondary">No attendance records available to calculate percentages.</p>
+                                    <a href="{% url 'generate_qr' %}" class="btn btn-primary btn-ripple mt-2">
+                                        <i class="bi bi-qr-code me-1"></i> Generate QR
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    /* ============================================
+       ATTENDANCE PERCENTAGE - NEON PURPLE GLASS THEME
+       ============================================ */
+
+    .glass-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+
+    .glass-card:hover {
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+    }
+
+    .card-header {
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        padding: 1rem 0.75rem;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        cursor: default;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+    }
+
+    .stat-card .stat-icon {
+        font-size: 1.8rem;
+        opacity: 0.12;
+        position: absolute;
+        right: 0.6rem;
+        top: 0.6rem;
+        color: var(--primary-light);
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-secondary);
+        font-weight: 600;
+        margin-bottom: 0.1rem;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        font-family: var(--font-heading);
+        color: var(--text-primary);
+    }
+
+    .stat-card-success .stat-icon {
+        color: var(--success);
+    }
+
+    .stat-card-warning .stat-icon {
+        color: var(--warning);
+    }
+
+    .stat-card-danger .stat-icon {
+        color: var(--danger);
+    }
+
+    .stat-card-primary .stat-icon {
+        color: var(--primary-light);
+    }
+
+    /* Table */
+    .table {
+        color: var(--text-primary);
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid var(--glass-border);
+        padding: 0.9rem 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table thead th i {
+        color: var(--primary-light);
+        opacity: 0.7;
+    }
+
+    .table tbody td {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid var(--glass-border);
+        vertical-align: middle;
+        color: var(--text-secondary);
+    }
+
+    .table tbody tr {
+        transition: var(--transition);
+        background: transparent;
+    }
+
+    .table tbody tr:hover {
+        background: rgba(112, 48, 239, 0.04);
+        transform: scale(1.002);
+    }
+
+    .table tbody tr .fw-medium {
+        color: var(--text-primary);
+    }
+
+    .table tbody tr .text-success {
+        color: var(--success) !important;
+    }
+
+    .table tbody tr .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Avatar */
+    .avatar-sm {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.75rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.35rem 0.8rem;
+        font-weight: 600;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .badge-success {
+        background: rgba(34, 197, 94, 0.12);
+        color: var(--success);
+        border-color: rgba(34, 197, 94, 0.2);
+    }
+
+    .badge-danger {
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--danger);
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--warning);
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .badge-outline-primary {
+        background: rgba(112, 48, 239, 0.08);
+        color: var(--primary-light);
+        border-color: rgba(112, 48, 239, 0.15);
+        font-size: 0.65rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .badge-lg {
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    /* Progress Bar Indicator */
+    .progress-bar-indicator {
+        height: 3px;
+        border-radius: 10px;
+        transition: width 0.8s ease;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Empty State */
+    .empty-state .empty-icon {
+        font-size: 4rem;
+        color: var(--text-muted);
+        opacity: 0.3;
+    }
+
+    .empty-state h5 {
+        color: var(--text-primary);
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        box-shadow: 0 4px 20px var(--primary-glow);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        transition: var(--transition);
+        font-family: var(--font-body);
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 8px 30px var(--primary-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+
+    .btn-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+
+    .text-primary {
+        color: var(--primary-light) !important;
+    }
+
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .table thead th,
+        .table tbody td {
+            padding: 0.6rem 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        .avatar-sm {
+            width: 28px;
+            height: 28px;
+            font-size: 0.6rem;
+        }
+
+        .badge {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .badge-lg {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.4rem;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 1.4rem;
+        }
+
+        .progress-bar-indicator {
+            height: 2px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-responsive {
+            border-radius: var(--radius);
+        }
+
+        .table thead th {
+            font-size: 0.55rem;
+            padding: 0.4rem 0.4rem;
+        }
+
+        .table tbody td {
+            padding: 0.4rem 0.4rem;
+            font-size: 0.7rem;
+        }
+
+        .avatar-sm {
+            width: 24px;
+            height: 24px;
+            font-size: 0.5rem;
+        }
+
+        .badge {
+            font-size: 0.55rem;
+            padding: 0.15rem 0.4rem;
+        }
+
+        .badge-lg {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .stat-card {
+            padding: 0.6rem 0.4rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.1rem;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 1.1rem;
+            right: 0.3rem;
+            top: 0.3rem;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.6rem;
+        }
+
+        .progress-bar-indicator {
+            height: 2px;
+        }
+    }
+</style>
+
+<script>
+    (function() {
+        'use strict';
+
+        // Animate progress bars on load using data-width attribute
+        document.querySelectorAll('.progress-bar-indicator').forEach(function(el) {
+            var width = el.dataset.width || '0';
+            el.style.width = '0%';
+            setTimeout(function() {
+                el.style.width = width + '%';
+            }, 200);
+        });
+
+    })();
+</script>
+
+{% endblock %}

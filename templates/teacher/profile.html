@@ -1,0 +1,459 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Teacher Profile{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 fade-in">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: var(--font-heading);">
+                My Profile <span class="text-primary">🧑‍🏫</span>
+            </h2>
+            <p class="text-secondary mb-0">Manage your personal information and view teaching statistics.</p>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill">
+                <i class="bi bi-person-badge me-1"></i> {{ teacher.employee_id }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Profile Card Row -->
+    <div class="row g-4">
+
+        <!-- Profile Info Card -->
+        <div class="col-lg-4">
+            <div class="card profile-card text-center h-100">
+                <div class="profile-banner"></div>
+                <div class="card-body">
+                    <div class="profile-avatar-wrapper">
+                        <img src="https://ui-avatars.com/api/?name={{ teacher.user.first_name }}+{{ teacher.user.last_name }}&background=7030EF&color=fff&size=120&font-size=0.5"
+                             class="profile-avatar rounded-circle"
+                             alt="{{ teacher.user.get_full_name }}">
+                        <span class="status-badge online"></span>
+                    </div>
+                    <h3 class="mt-3 fw-bold">{{ teacher.user.get_full_name }}</h3>
+                    <p class="text-muted mb-1">
+                        <i class="bi bi-building"></i> {{ teacher.department.department_name }}
+                    </p>
+                    <p class="text-muted small">
+                        <i class="bi bi-person-vcard"></i> {{ teacher.employee_id }}
+                    </p>
+
+                    <!-- ✅ REPLACED: modal button with separate action links -->
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <a href="{% url 'edit_teacher_profile' %}" class="btn btn-primary">
+                            <i class="bi bi-pencil-square me-1"></i>
+                            Edit Profile
+                        </a>
+                        <a href="{% url 'teacher_change_password' %}" class="btn btn-warning">
+                            <i class="bi bi-key-fill me-1"></i>
+                            Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Card -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-semibold"><i class="bi bi-info-circle text-primary me-2"></i>Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-person"></i> Full Name</label>
+                                <p class="info-value">{{ teacher.user.get_full_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-envelope"></i> Email</label>
+                                <p class="info-value">{{ teacher.user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-phone"></i> Phone</label>
+                                <p class="info-value">{{ teacher.phone|default:"Not provided" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-building"></i> Department</label>
+                                <p class="info-value">{{ teacher.department.department_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label"><i class="bi bi-person-vcard"></i> Employee ID</label>
+                                <p class="info-value">{{ teacher.employee_id }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mt-2">
+
+        <div class="col-md-6 col-6">
+            <div class="stat-card h-100 text-center stat-card-primary">
+                <div class="stat-icon text-primary"><i class="bi bi-qr-code-scan"></i></div>
+                <div class="stat-label">Total QR Sessions</div>
+                <div class="stat-value" id="sessionsCount">{{ total_sessions }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-6">
+            <div class="stat-card h-100 text-center stat-card-success">
+                <div class="stat-icon text-success"><i class="bi bi-check-all"></i></div>
+                <div class="stat-label">Total Attendance Records</div>
+                <div class="stat-value" id="attendanceCount">{{ total_attendance }}</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 🗑️ MODAL REMOVED – now separate pages -->
+
+<style>
+    /* ============================================
+       TEACHER PROFILE - NEON PURPLE GLASS THEME
+       ============================================ */
+
+    /* Profile Card */
+    .profile-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
+        transition: var(--transition);
+    }
+    .profile-card:hover {
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        transform: translateY(-4px);
+    }
+
+    .profile-banner {
+        height: 100px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        position: relative;
+        overflow: hidden;
+    }
+    .profile-banner::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.15), transparent 70%);
+    }
+
+    .profile-avatar-wrapper {
+        position: relative;
+        margin-top: -50px;
+        display: inline-block;
+    }
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border: 4px solid var(--bg-card);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        object-fit: cover;
+    }
+    .status-badge {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 3px solid var(--bg-card);
+        display: inline-block;
+    }
+    .status-badge.online {
+        background: var(--success);
+        box-shadow: 0 0 20px var(--success-glow);
+    }
+
+    /* Info Items */
+    .info-item {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--glass-border);
+    }
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.1rem;
+    }
+    .info-label i {
+        margin-right: 0.3rem;
+        color: var(--primary-light);
+    }
+    .info-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        padding: 1.25rem 1rem;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        background: var(--bg-card-hover);
+    }
+    .stat-card .stat-icon {
+        font-size: 2rem;
+        opacity: 0.15;
+        position: absolute;
+        right: 0.8rem;
+        top: 0.8rem;
+    }
+    .stat-card .stat-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-secondary);
+        font-weight: 600;
+        margin-bottom: 0.1rem;
+    }
+    .stat-card .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: var(--font-heading);
+        color: var(--text-primary);
+    }
+    .stat-card .stat-value.text-success { color: var(--success); }
+    .stat-card .stat-value.text-danger { color: var(--danger); }
+    .stat-card .stat-value.text-warning { color: var(--warning); }
+    .stat-card .stat-value.text-primary { color: var(--primary-light); }
+
+    .stat-card-success .stat-icon { color: var(--success); }
+    .stat-card-warning .stat-icon { color: var(--warning); }
+    .stat-card-primary .stat-icon { color: var(--primary-light); }
+
+    /* Card overrides */
+    .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+    .card:hover {
+        box-shadow: var(--shadow-lg), var(--glow-purple);
+        transform: translateY(-4px);
+        background: var(--bg-card-hover);
+    }
+    .card-header {
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.35rem 0.8rem;
+        font-weight: 600;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border: 1px solid transparent;
+    }
+    .badge-success {
+        background: rgba(34, 197, 94, 0.12);
+        color: var(--success);
+        border-color: rgba(34, 197, 94, 0.2);
+    }
+    .badge-danger {
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--danger);
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--warning);
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        box-shadow: 0 4px 20px var(--primary-glow);
+        color: #fff;
+        transition: var(--transition);
+    }
+    .btn-primary:hover {
+        box-shadow: 0 8px 30px var(--primary-glow);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-warning {
+        background: var(--warning);
+        border: none;
+        color: #0F172A;
+        transition: var(--transition);
+    }
+    .btn-warning:hover {
+        background: #D97706;
+        transform: translateY(-2px);
+        color: #0F172A;
+    }
+    .btn-secondary {
+        background: var(--bg-surface);
+        border: 1px solid var(--glass-border);
+        color: var(--text-secondary);
+    }
+    .btn-secondary:hover {
+        background: var(--bg-card-hover);
+        color: var(--text-primary);
+        transform: translateY(-2px);
+    }
+    .btn-ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .text-secondary {
+        color: var(--text-secondary) !important;
+    }
+    .text-primary {
+        color: var(--primary-light) !important;
+    }
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+        }
+        .profile-banner {
+            height: 70px;
+        }
+        .profile-avatar-wrapper {
+            margin-top: -40px;
+        }
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+        }
+        .info-value {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container-fluid {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .stat-card {
+            padding: 0.75rem 0.5rem;
+        }
+        .stat-card .stat-value {
+            font-size: 1.3rem;
+        }
+        .d-flex.gap-2 {
+            flex-direction: column;
+            gap: 0.5rem !important;
+        }
+        .d-flex.gap-2 .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    (function() {
+        'use strict';
+
+        // Animate counter for stats
+        function animateStat(element, target, duration = 600) {
+            const start = 0;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + (target - start) * eased);
+                element.textContent = current.toLocaleString();
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target.toLocaleString();
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        const sessionsEl = document.getElementById('sessionsCount');
+        const attendanceEl = document.getElementById('attendanceCount');
+
+        if (sessionsEl) {
+            const val = parseInt(sessionsEl.textContent) || 0;
+            animateStat(sessionsEl, val, 600);
+        }
+        if (attendanceEl) {
+            const val = parseInt(attendanceEl.textContent) || 0;
+            animateStat(attendanceEl, val, 600);
+        }
+
+    })();
+</script>
+
+{% endblock %}
