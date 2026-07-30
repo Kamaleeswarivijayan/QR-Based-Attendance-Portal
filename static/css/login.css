@@ -1,0 +1,598 @@
+/* ============================================
+   LOGIN PAGE - NEON PURPLE GLASSMORPHISM THEME
+   ============================================ */
+
+/* CSS Variables (fallback, but will use root variables from style.css if available) */
+:root {
+    --primary: #7030EF;
+    --primary-dark: #5B21B6;
+    --primary-light: #8B5CF6;
+    --primary-glow: rgba(112, 48, 239, 0.4);
+    --secondary: #8B5CF6;
+    --accent: #DB1FFF;
+    --accent-glow: rgba(219, 31, 255, 0.3);
+    --bg-dark: #090820;
+    --bg-surface: #16112F;
+    --bg-card: rgba(255, 255, 255, 0.06);
+    --bg-card-hover: rgba(255, 255, 255, 0.10);
+    --text-primary: #FFFFFF;
+    --text-secondary: #B9B7D4;
+    --text-muted: #8B89A8;
+    --glass-bg: rgba(22, 17, 47, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --info: #3B82F6;
+    --font-heading: 'Sora', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --radius: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light mode fallback */
+.light-mode {
+    --bg-dark: #F8FAFC;
+    --bg-surface: #FFFFFF;
+    --bg-card: rgba(0, 0, 0, 0.02);
+    --bg-card-hover: rgba(0, 0, 0, 0.04);
+    --text-primary: #0F172A;
+    --text-secondary: #334155;
+    --text-muted: #64748B;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================
+   PAGE LAYOUT
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: var(--transition);
+}
+
+/* Background Glow Orbs (same as dashboard) */
+.bg-glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.3;
+}
+.bg-glow-1 {
+    width: 600px;
+    height: 600px;
+    background: var(--primary);
+    top: -10%;
+    left: -10%;
+    animation: floatGlow 20s ease-in-out infinite alternate;
+}
+.bg-glow-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--accent);
+    bottom: -10%;
+    right: -10%;
+    animation: floatGlow 25s ease-in-out infinite alternate-reverse;
+}
+.bg-glow-3 {
+    width: 400px;
+    height: 400px;
+    background: var(--secondary);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    animation: floatGlow 30s ease-in-out infinite alternate;
+}
+@keyframes floatGlow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(40px, 40px) scale(1.1); }
+}
+
+.login-page {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(2px);
+}
+
+/* ============================================
+   LEFT PANEL (Brand & Features)
+   ============================================ */
+.left-panel {
+    flex: 1.2;
+    position: relative;
+    overflow: hidden;
+    background: rgba(9, 8, 32, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--text-primary);
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(112, 48, 239, 0.15), transparent 60%),
+                radial-gradient(circle at 70% 80%, rgba(219, 31, 255, 0.1), transparent 50%);
+    pointer-events: none;
+}
+
+.left-content {
+    position: relative;
+    z-index: 5;
+    max-width: 480px;
+    padding: 1rem;
+    animation: fadeInUp 0.8s ease;
+}
+
+.logo-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    color: #fff;
+    box-shadow: 0 20px 60px var(--primary-glow);
+    margin-bottom: 1.5rem;
+}
+
+.left-content h1 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #fff, var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.left-content p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.features {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.feature-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg-card);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    background: var(--bg-card-hover);
+    transform: translateX(6px);
+    border-color: var(--primary);
+}
+
+.feature-card i {
+    font-size: 2rem;
+    color: var(--accent);
+    width: 2.5rem;
+    text-align: center;
+}
+
+.feature-card h5 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.1rem;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* ============================================
+   RIGHT PANEL (Login Card)
+   ============================================ */
+.right-panel {
+    flex: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+.login-card {
+    max-width: 440px;
+    width: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--glass-shadow), var(--glow-purple);
+    animation: fadeInUp 0.6s ease;
+    transition: var(--transition);
+}
+
+.login-card:hover {
+    box-shadow: var(--glass-shadow), var(--glow-purple), 0 0 60px rgba(112, 48, 239, 0.1);
+}
+
+.login-card h2 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.input-box:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.input-box i {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    padding-left: 0.75rem;
+}
+
+.input-box input {
+    border: none;
+    background: transparent;
+    padding: 0.7rem 0.75rem 0.7rem 0.5rem;
+    width: 100%;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.input-box input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.input-box span {
+    padding: 0 0.75rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.input-box span:hover {
+    color: var(--primary-light);
+}
+
+/* ============================================
+   ROLE SELECTION
+   ============================================ */
+.role-title {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.role-selection {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.role {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: var(--transition);
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--font-body);
+    min-width: 60px;
+}
+
+.role:hover {
+    border-color: var(--primary);
+    background: rgba(112, 48, 239, 0.1);
+    color: var(--text-primary);
+}
+
+.role.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 20px var(--primary-glow);
+}
+
+/* ============================================
+   REMEMBER ME
+   ============================================ */
+.remember {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.remember label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.remember input[type="checkbox"] {
+    accent-color: var(--primary);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+.remember a {
+    color: var(--primary-light);
+    font-weight: 500;
+}
+
+.remember a:hover {
+    text-decoration: underline;
+    color: var(--accent);
+}
+
+/* ============================================
+   LOGIN BUTTON
+   ============================================ */
+.login-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+    cursor: pointer;
+    box-shadow: 0 8px 30px var(--primary-glow);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-body);
+}
+
+.login-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.login-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+.login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px var(--primary-glow);
+    color: #fff;
+}
+
+.login-btn:active {
+    transform: scale(0.97);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer-text {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+}
+
+/* ============================================
+   MESSAGES (Alert/Toasts)
+   ============================================ */
+.alert {
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: none;
+    font-weight: 500;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: slideInRight 0.4s ease;
+    box-shadow: var(--glass-shadow);
+}
+
+.alert-danger {
+    border-left: 4px solid var(--danger);
+    color: var(--danger);
+}
+
+.alert-success {
+    border-left: 4px solid var(--success);
+    color: var(--success);
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 992px) {
+    .left-panel {
+        display: none;
+    }
+    .right-panel {
+        flex: 1;
+        width: 100%;
+        padding: 1.5rem;
+    }
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .right-panel {
+        padding: 1rem;
+    }
+    .login-card {
+        padding: 1.5rem 1rem;
+        border-radius: var(--radius);
+    }
+    .role-selection {
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+    .role {
+        flex: none;
+        width: 100%;
+    }
+    .remember {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    .logo-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+    .left-content h1 {
+        font-size: 1.5rem;
+    }
+    .feature-card {
+        padding: 0.75rem 1rem;
+    }
+    .feature-card i {
+        font-size: 1.5rem;
+        width: 2rem;
+    }
+    .feature-card h5 {
+        font-size: 1rem;
+    }
+    .feature-card p {
+        font-size: 0.8rem;
+    }
+}
+
+/* ============================================
+   UTILITY (for fallback if not using dashboard)
+   ============================================ */
+.text-primary {
+    color: var(--primary-light) !important;
+}
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+.text-muted {
+    color: var(--text-muted) !important;
+}
