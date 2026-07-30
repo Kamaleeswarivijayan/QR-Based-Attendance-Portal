@@ -105,52 +105,32 @@ SSQAMS/
 
 # ⚙️ Installation
 
-## 1️⃣ Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/SSQAMS.git
-```
-
-## 2️⃣ Navigate to the Project
-
-```bash
-cd SSQAMS
-```
-
-## 3️⃣ Create Virtual Environment
+## 1️⃣ Create Virtual Environment
 
 ```bash
 python -m venv venv
 ```
 
-## 4️⃣ Activate Virtual Environment
-
-### Windows
+## 2️⃣ Activate Virtual Environment
 
 ```bash
 venv\Scripts\activate
 ```
 
-### Linux / macOS
-
-```bash
-source venv/bin/activate
-```
-
-## 5️⃣ Install Requirements
+## 3️⃣ Install Requirements
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 6️⃣ Run Database Migrations
+## 4️⃣ Run Database Migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-## 7️⃣ Start the Development Server
+## 5️⃣ Start the Development Server
 
 ```bash
 python manage.py runserver
