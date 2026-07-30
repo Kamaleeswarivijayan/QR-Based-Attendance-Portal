@@ -1,5 +1,4 @@
 # QR-Based-Attendance-Portal
-# Smart Secure QR Attendance Management System
 
 ## Description
 A Django-based QR attendance system that automates attendance marking using QR codes.
